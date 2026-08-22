@@ -13,3 +13,4 @@ tunnel_err.log
 build/
 dist/
 *.spec
+Dockerfile
