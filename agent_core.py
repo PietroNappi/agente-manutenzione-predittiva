@@ -26,7 +26,7 @@ from estrazione_quantita import extract_quantities
 # ============================================================
 
 MAX_FILE_SECONDS = 300
-MAX_FILE_MB = 250
+MAX_FILE_MB = 1000
 DEFAULT_PSET = "Pset_InformazioniProgetto"
 
 MANUALE_ROOF_AREAS = {

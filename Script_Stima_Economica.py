@@ -46,7 +46,7 @@ DEFAULT_OUTPUT_SUBFOLDER = "output"
 DEFAULT_PSET = "Pset_InformazioniProgetto"
 DEFAULT_TARGET = "de nicola"
 MAX_FILE_SECONDS = 300  # Timeout per file (5 minuti). 0 = nessun limite
-MAX_FILE_MB = 250  # Ignora file più grandi di questo (MB)
+MAX_FILE_MB = 1000  # Ignora file più grandi di questo (MB)
 
 # Aree copertura manuali da Revit (override dei valori IFC)
 # Ordine importante: nomi più specifici PRIMA per evitare conflitti
