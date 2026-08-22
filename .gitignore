@@ -10,3 +10,6 @@ gh_err.txt
 login_gh.bat
 tunnel.log
 tunnel_err.log
+build/
+dist/
+*.spec
