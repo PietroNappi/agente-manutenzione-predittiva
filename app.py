@@ -11,7 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import streamlit as st
 import pandas as pd
-from agent_core import run_analysis, list_models, parse_prezzario_csv
+from agent_core import run_analysis, list_models
+from interventi_dict import parse_prezzario_csv
 
 # ============================================================
 # TRADUZIONI
