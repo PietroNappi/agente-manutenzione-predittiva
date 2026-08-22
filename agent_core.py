@@ -277,7 +277,7 @@ def _get_interventi_esclusi(model_name, gia_fatti_map=None):
 
 def build_sample_analysis(df_sim_energ, df_sim_strut, target_substring,
                           all_pset_data, all_quantities, all_costs,
-                          gia_fatti_map=None):
+                          gia_fatti_map=None, prezzario_custom=None):
     if gia_fatti_map is None:
         gia_fatti_map = {}
 
@@ -499,7 +499,8 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
     sample = build_sample_analysis(
         df_sim_energ, df_sim_strut, target,
         all_pset_data, all_quantities, all_costs,
-        gia_fatti_map=gia_fatti_map
+        gia_fatti_map=gia_fatti_map,
+        prezzario_custom=prezzario_custom
     )
 
     # 6. Riepilogo per modello
