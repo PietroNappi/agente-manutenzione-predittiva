@@ -33,7 +33,7 @@ T = {
         "models_found": "{} modelli trovati",
         "show_models": "Mostra modelli",
         "folder_not_found": "Cartella non trovata",
-        "upload_label": "Carica file IFC",
+        "upload_label": "Carica file IFC (puoi selezionarli tutti insieme)",
         "files_uploaded": "{} file caricati",
         "target_title": "Modello campione",
         "target_placeholder": "Nome modello da stimare...",
@@ -76,7 +76,7 @@ T = {
         "models_found": "{} models found",
         "show_models": "Show models",
         "folder_not_found": "Folder not found",
-        "upload_label": "Upload IFC files",
+        "upload_label": "Upload IFC files (select all at once)",
         "files_uploaded": "{} files uploaded",
         "target_title": "Sample building",
         "target_placeholder": "Model name to estimate...",
@@ -232,6 +232,7 @@ with st.sidebar:
         elif ifc_folder:
             st.error(t("folder_not_found"))
     else:
+        st.caption("Apri la cartella, premi Ctrl+A per selezionare tutti gli IFC, e caricali tutti insieme")
         uploaded = st.file_uploader(t("upload_label"), type=["ifc"], accept_multiple_files=True)
         if uploaded:
             tmp = tempfile.mkdtemp(prefix="stima_")
