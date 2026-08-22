@@ -210,23 +210,14 @@ with st.sidebar:
     uploaded = st.file_uploader(t("upload_label"), type=["ifc"], accept_multiple_files=True,
                                  label_visibility="collapsed")
     if uploaded:
-        MAX_UPLOAD = 100
-        too_big = [f.name for f in uploaded if f.size > MAX_UPLOAD * 1024 * 1024]
-        if too_big:
-            st.warning(f"File troppo grandi (> {MAX_UPLOAD}MB): {', '.join(too_big)}")
-        valid = [f for f in uploaded if f.size <= MAX_UPLOAD * 1024 * 1024]
-        if len(valid) > 5:
-            st.warning(f"Massimo 5 file alla volta su server gratuito. Ne hai caricati {len(valid)}. Verra usato solo il primo.")
-            valid = valid[:5]
-        if valid:
-            tmp = tempfile.mkdtemp(prefix="stima_")
-            for f in valid:
-                with open(os.path.join(tmp, f.name), "wb") as out:
-                    out.write(f.read())
-            ifc_folder = tmp
-            models = list_models(ifc_folder)
-            model_names = [m["name"] for m in models]
-            st.success(t("files_uploaded").format(len(models)))
+        tmp = tempfile.mkdtemp(prefix="stima_")
+        for f in uploaded:
+            with open(os.path.join(tmp, f.name), "wb") as out:
+                out.write(f.read())
+        ifc_folder = tmp
+        models = list_models(ifc_folder)
+        model_names = [m["name"] for m in models]
+        st.success(t("files_uploaded").format(len(models)))
 
     st.markdown("### Carica prezzario")
     st.markdown("---")
