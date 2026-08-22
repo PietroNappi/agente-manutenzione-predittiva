@@ -219,6 +219,14 @@ with st.sidebar:
         model_names = [m["name"] for m in models]
         st.success(t("files_uploaded").format(len(models)))
 
+    st.markdown("### Carica prezzario")
+    st.markdown("---")
+
+    prezzario_custom = st.file_uploader("Carica prezzario CSV", type=["csv"], accept_multiple_files=False,
+                                         label_visibility="collapsed", key="prezzario_upload")
+    if prezzario_custom:
+        st.session_state.prezzario_custom = prezzario_custom.read()
+
     st.markdown("---")
     st.markdown("**" + t("target_title") + "**")
     if model_names:
