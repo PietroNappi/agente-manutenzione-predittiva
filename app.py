@@ -5,12 +5,10 @@ Avvio: py -m streamlit run app.py --server.address 0.0.0.0 --server.port 8501
 
 import sys
 import os
-import io
 import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 from agent_core import run_analysis, list_models
 
