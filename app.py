@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import streamlit as st
 import pandas as pd
-from agent_core import run_analysis, list_models
+from agent_core import run_analysis, list_models, parse_prezzario_csv
 
 # ============================================================
 # TRADUZIONI
@@ -224,7 +224,11 @@ with st.sidebar:
     prezzario_custom = st.file_uploader("Carica prezzario CSV", type=["csv"], accept_multiple_files=False,
                                          label_visibility="collapsed", key="prezzario_upload")
     if prezzario_custom:
-        st.session_state.prezzario_custom = prezzario_custom.read()
+        csv_bytes = prezzario_custom.read()
+        prezzario_dict = parse_prezzario_csv(csv_bytes)
+        st.session_state.prezzario_custom = prezzario_dict
+        if prezzario_dict:
+            st.success(f"Prezzario caricato: {len(prezzario_dict)} voci trovate")
 
     st.markdown("---")
     st.markdown("**" + t("target_title") + "**")
@@ -279,7 +283,8 @@ if target_from_sidebar and st.session_state.get("last_analyzed") != target_from_
     with st.chat_message("assistant"):
         with st.spinner(t("analyzing").format(target_from_sidebar)):
             result = run_analysis(ifc_folder=ifc_folder, target=target_from_sidebar,
-                                  gia_fatti=gia_fatti, timeout=timeout)
+                                  gia_fatti=gia_fatti, timeout=timeout,
+                                  prezzario_custom=st.session_state.get("prezzario_custom"))
         st.session_state.last_result = result
         st.session_state.last_analyzed = target_from_sidebar
 
@@ -361,7 +366,8 @@ if user_input:
         with st.chat_message("assistant"):
             with st.spinner(t("analyzing").format(target_input)):
                 result = run_analysis(ifc_folder=ifc_folder, target=target_input,
-                                      gia_fatti=gia_fatti, timeout=timeout)
+                                      gia_fatti=gia_fatti, timeout=timeout,
+                                      prezzario_custom=st.session_state.get("prezzario_custom"))
 
             st.session_state.last_result = result
 

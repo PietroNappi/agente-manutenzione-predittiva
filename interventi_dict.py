@@ -514,7 +514,46 @@ def get_prezzario_completo():
     return voci
 
 
-def stima_costo(codice_intervento, quantita):
+def parse_prezzario_csv(csv_bytes):
+    """
+    Parsa un CSV di prezzario e ritorna un dict {codice: prezzo_unitario}.
+    Supporta separatore | o ; o ,
+    Cerca le colonne: Codice, Prezzo (o Prezzo senza S.G.)
+    """
+    import csv
+    import io
+
+    text = csv_bytes.decode("utf-8", errors="replace")
+    # Prova a rilevare il separatore
+    first_line = text.split("\n")[0]
+    if "|" in first_line:
+        sep = "|"
+    elif ";" in first_line:
+        sep = ";"
+    else:
+        sep = ","
+
+    reader = csv.DictReader(io.StringIO(text), delimiter=sep)
+
+    prezzi = {}
+    for row in reader:
+        codice = None
+        prezzo = None
+        for k, v in row.items():
+            if k and "codice" in k.lower():
+                codice = v.strip().strip('"') if v else None
+            if k and ("prezzo senza" in k.lower() or k.lower().strip() == "prezzo"):
+                try:
+                    prezzo = float(v.strip().strip('"').replace(",", "."))
+                except (ValueError, TypeError):
+                    pass
+        if codice and prezzo and prezzo > 0:
+            prezzi[codice] = prezzo
+
+    return prezzi
+
+
+def stima_costo(codice_intervento, quantita, prezzario_custom=None):
     """
     Stima il costo di un intervento dato il codice e la quantità.
     Ritorna dict con dettagli del calcolo o None se intervento non trovato.
@@ -523,14 +562,20 @@ def stima_costo(codice_intervento, quantita):
         return None
     interv = INTERVENTI[codice_intervento]
     pz = interv["prezzario"]
-    costo = quantita * pz["prezzo_unitario"]
+
+    # Se c'e un prezzario custom, prova a sovrascrivere il prezzo
+    prezzo = pz["prezzo_unitario"]
+    if prezzario_custom and pz["codice"] in prezzario_custom:
+        prezzo = prezzario_custom[pz["codice"]]
+
+    costo = quantita * prezzo
     return {
         "codice": codice_intervento,
         "nome": interv["nome"],
         "tipo": interv["tipo"],
         "quantita": quantita,
         "unita_misura": interv["unita_misura"],
-        "prezzo_unitario": pz["prezzo_unitario"],
+        "prezzo_unitario": prezzo,
         "costo_totale": round(costo, 2),
         "codice_prezzario": pz["codice"],
         "valuta": pz["valuta"]

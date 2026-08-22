@@ -18,7 +18,7 @@ try:
 except ImportError:
     raise ImportError("ifcopenshell non installato. Esegui: pip install ifcopenshell")
 
-from interventi_dict import INTERVENTI, stima_costo
+from interventi_dict import INTERVENTI, stima_costo, parse_prezzario_csv
 from estrazione_quantita import extract_quantities
 
 # ============================================================
@@ -253,10 +253,10 @@ def hypothesize_interventions(params_pset, quantities, target_type="both", inter
     return interventions
 
 
-def estimate_costs(interventions, quantities):
+def estimate_costs(interventions, quantities, prezzario_custom=None):
     results = []
     for codice, quantita in interventions.items():
-        stima = stima_costo(codice, quantita)
+        stima = stima_costo(codice, quantita, prezzario_custom=prezzario_custom)
         if stima:
             results.append(stima)
     return results
@@ -345,7 +345,7 @@ def build_sample_analysis(df_sim_energ, df_sim_strut, target_substring,
                         qty_val = ifc_qty_map[e]
                         break
 
-            stima = stima_costo(codice, qty_val)
+            stima = stima_costo(codice, qty_val, prezzario_custom=prezzario_custom)
             if stima:
                 stima["quantita_campione"] = qty_val
                 stima["note"] = interv_def["prezzario"].get("note", "")
@@ -386,7 +386,7 @@ def list_models(ifc_folder):
 
 
 def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
-                 timeout=300, progress_callback=None):
+                 timeout=300, progress_callback=None, prezzario_custom=None):
     """
     Esegue l'analisi completa di stima economica.
 
@@ -397,6 +397,7 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
         target_type: "energetico", "strutturale", o "both"
         timeout: timeout per file IFC in secondi
         progress_callback: funzione opzionale per reportare progresso
+        prezzario_custom: dict {codice: prezzo} da CSV caricato dall'utente
 
     Returns:
         dict con tutti i risultati dell'analisi
@@ -479,7 +480,7 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
         interventions = hypothesize_interventions(pset, qty, target_type=target_type)
         if interventions:
             censimento_interventi.update(interventions.keys())
-            costs = estimate_costs(interventions, qty)
+            costs = estimate_costs(interventions, qty, prezzario_custom=prezzario_custom)
             all_costs[model_name] = costs
 
     # Aggiungi cappotto a Caravaggio se presente
@@ -488,7 +489,7 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
         gia_liquidi = {c["codice"] for c in all_costs.get(vicino_candidato, [])}
         if "isolamento_pareti_esterne" not in gia_liquidi:
             qty_v = all_quantities.get(vicino_candidato, {})
-            stima = stima_costo("isolamento_pareti_esterne", qty_v.get("superficie_involucro", 0))
+            stima = stima_costo("isolamento_pareti_esterne", qty_v.get("superficie_involucro", 0), prezzario_custom=prezzario_custom)
             if stima:
                 all_costs.setdefault(vicino_candidato, []).append(stima)
                 censimento_interventi.add("isolamento_pareti_esterne")
