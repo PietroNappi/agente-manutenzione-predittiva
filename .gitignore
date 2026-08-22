@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.streamlit/secrets.toml
+*.ifc
+cloudflared.exe
+gh_out.txt
+gh_err.txt
+login_gh.bat
+tunnel.log
+tunnel_err.log
