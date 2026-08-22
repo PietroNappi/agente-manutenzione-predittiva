@@ -25,15 +25,15 @@ T = {
         "header_sub": "Stima economica degli interventi per la manutenzione predittiva",
         "header_caption": "Analisi basata su somiglianza modelli IFC",
         "powered_by": "Powered by Pietro Nappi",
-        "sidebar_config": "Configurazione",
-        "source_title": "Sorgente modelli IFC",
+        "sidebar_config": "",
+        "source_title": "",
         "source_local": "Cartella locale",
         "source_upload": "Carica singoli file",
         "folder_placeholder": "Incolla percorso cartella...",
         "models_found": "{} modelli trovati",
         "show_models": "Mostra modelli",
         "folder_not_found": "Cartella non trovata",
-        "upload_label": "Carica file IFC (puoi selezionarli tutti insieme)",
+        "upload_label": "Carica file",
         "files_uploaded": "{} file caricati",
         "target_title": "Modello campione",
         "target_placeholder": "Nome modello da stimare...",
@@ -68,15 +68,15 @@ T = {
         "header_sub": "Intervention cost estimation for predictive maintenance",
         "header_caption": "Analysis based on IFC model similarity",
         "powered_by": "Powered by Pietro Nappi",
-        "sidebar_config": "Configuration",
-        "source_title": "IFC model source",
+        "sidebar_config": "",
+        "source_title": "",
         "source_local": "Local folder",
         "source_upload": "Upload individual files",
         "folder_placeholder": "Paste folder path...",
         "models_found": "{} models found",
         "show_models": "Show models",
         "folder_not_found": "Folder not found",
-        "upload_label": "Upload IFC files (select all at once)",
+        "upload_label": "Upload files",
         "files_uploaded": "{} files uploaded",
         "target_title": "Sample building",
         "target_placeholder": "Model name to estimate...",
@@ -202,14 +202,10 @@ with st.sidebar:
                 st.rerun()
 
     st.markdown("---")
-    st.markdown("### " + t("sidebar_config"))
-
-    st.markdown("**" + t("source_title") + "**")
 
     ifc_folder = ""
     model_names = []
 
-    st.caption("Apri la cartella, premi Ctrl+A per selezionare tutti gli IFC, e caricali tutti insieme")
     uploaded = st.file_uploader(t("upload_label"), type=["ifc"], accept_multiple_files=True,
                                  label_visibility="collapsed")
     if uploaded:
