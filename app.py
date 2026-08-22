@@ -201,6 +201,7 @@ with st.sidebar:
                 st.session_state.lang = "en"
                 st.rerun()
 
+    st.markdown("### Carica file")
     st.markdown("---")
 
     ifc_folder = ""
