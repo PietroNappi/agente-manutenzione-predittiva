@@ -13,10 +13,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+ifcopenshell = None
 try:
-    import ifcopenshell
+    import ifcopenshell as _ifc
+    ifcopenshell = _ifc
 except ImportError:
-    raise ImportError("ifcopenshell non installato. Esegui: pip install ifcopenshell")
+    pass
 
 from interventi_dict import INTERVENTI, stima_costo, parse_prezzario_csv
 from estrazione_quantita import extract_quantities
@@ -402,6 +404,9 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
     Returns:
         dict con tutti i risultati dell'analisi
     """
+    if ifcopenshell is None:
+        return {"error": "ifcopenshell non installato. Impossibile analizzare file IFC."}
+
     if gia_fatti is None:
         gia_fatti = []
     gia_fatti_map = {target.upper(): gia_fatti} if gia_fatti else {}

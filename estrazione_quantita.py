@@ -12,7 +12,9 @@ try:
     import ifcopenshell.util.element as ifc_util
     import ifcopenshell.util.unit as ifc_unit
 except ImportError:
-    raise ImportError("ifcopenshell non installato. pip install ifcopenshell")
+    ifcopenshell = None
+    ifc_util = None
+    ifc_unit = None
 
 
 def _get_conversion_factor(model):
