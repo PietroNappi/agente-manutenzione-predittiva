@@ -205,44 +205,22 @@ with st.sidebar:
     st.markdown("### " + t("sidebar_config"))
 
     st.markdown("**" + t("source_title") + "**")
-    src_local = t("source_local")
-    src_upload = t("source_upload")
-    src_options = [src_local, src_upload]
-
-    if "src_idx" not in st.session_state:
-        st.session_state.src_idx = 0
-    sel_idx = st.radio("src", src_options, index=st.session_state.src_idx,
-                       label_visibility="collapsed", horizontal=True)
-    st.session_state.src_idx = src_options.index(sel_idx)
-    sorgente = sel_idx
 
     ifc_folder = ""
     model_names = []
 
-    if sorgente == src_local:
-        ifc_folder = st.text_input("path", value=r"C:\Users\pietr\Desktop\Scuole ifc parametri",
-                                    label_visibility="collapsed", placeholder=t("folder_placeholder"))
-        if os.path.isdir(ifc_folder):
-            models = list_models(ifc_folder)
-            model_names = [m["name"] for m in models]
-            st.success(t("models_found").format(len(models)))
-            with st.expander(t("show_models")):
-                for m in models:
-                    st.caption(f"{m['name'][:50]} ({m['size_mb']}MB)")
-        elif ifc_folder:
-            st.error(t("folder_not_found"))
-    else:
-        st.caption("Apri la cartella, premi Ctrl+A per selezionare tutti gli IFC, e caricali tutti insieme")
-        uploaded = st.file_uploader(t("upload_label"), type=["ifc"], accept_multiple_files=True)
-        if uploaded:
-            tmp = tempfile.mkdtemp(prefix="stima_")
-            for f in uploaded:
-                with open(os.path.join(tmp, f.name), "wb") as out:
-                    out.write(f.read())
-            ifc_folder = tmp
-            models = list_models(ifc_folder)
-            model_names = [m["name"] for m in models]
-            st.success(t("files_uploaded").format(len(models)))
+    st.caption("Apri la cartella, premi Ctrl+A per selezionare tutti gli IFC, e caricali tutti insieme")
+    uploaded = st.file_uploader(t("upload_label"), type=["ifc"], accept_multiple_files=True,
+                                 label_visibility="collapsed")
+    if uploaded:
+        tmp = tempfile.mkdtemp(prefix="stima_")
+        for f in uploaded:
+            with open(os.path.join(tmp, f.name), "wb") as out:
+                out.write(f.read())
+        ifc_folder = tmp
+        models = list_models(ifc_folder)
+        model_names = [m["name"] for m in models]
+        st.success(t("files_uploaded").format(len(models)))
 
     st.markdown("---")
     st.markdown("**" + t("target_title") + "**")
