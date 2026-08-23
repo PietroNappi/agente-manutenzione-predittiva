@@ -523,6 +523,8 @@ def run_analysis(ifc_folder, target, gia_fatti=None, target_type="both",
     return {
         "n_modelli": len(all_pset_data),
         "all_pset_data": all_pset_data,
+        "all_quantities": all_quantities,
+        "all_costs": all_costs,
         "modelli_skipped": skipped,
         "censimento_tipi": sorted(censimento_interventi),
         "riepilogo": riepilogo,

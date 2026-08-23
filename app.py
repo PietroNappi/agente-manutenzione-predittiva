@@ -5,14 +5,13 @@ Avvio: py -m streamlit run app.py --server.address 0.0.0.0 --server.port 8501
 
 import sys
 import os
-import io
-import tempfile
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import re
+import time
 
 import streamlit as st
-import pandas as pd
 from agent_core import run_analysis, list_models
 from interventi_dict import parse_prezzario_csv
+from report_excel import write_report
 
 # ============================================================
 # TRADUZIONI
@@ -316,16 +315,8 @@ if target_from_sidebar and st.session_state.get("last_analyzed") != target_from_
                 st.markdown(resp)
 
                 try:
-                    buf = io.BytesIO()
-                    with pd.ExcelWriter(buf, engine="xlsxwriter") as writer:
-                        pd.DataFrame(result["riepilogo"]).T.to_excel(writer, sheet_name="Riepilogo")
-                        pd.DataFrame({t("field_model"): [sample["target_name"]],
-                                      t("field_neighbor"): [sample["vicino_name"]],
-                                      t("field_similarity"): [sample["sim_media"]]}).to_excel(writer, sheet_name="Campione", index=False)
-                        if sample["interventi_campione"]:
-                            pd.DataFrame(sample["interventi_campione"]).to_excel(writer, sheet_name="Interventi", index=False)
-                    buf.seek(0)
-                    st.download_button(label=t("download_excel"), data=buf,
+                    xlsx_bytes = write_report(result)
+                    st.download_button(label=t("download_excel"), data=xlsx_bytes,
                                        file_name="Stima_" + target_from_sidebar.replace(" ", "_") + ".xlsx",
                                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 except Exception as e:
@@ -399,16 +390,8 @@ if user_input:
                     st.markdown(resp)
 
                     try:
-                        buf = io.BytesIO()
-                        with pd.ExcelWriter(buf, engine="xlsxwriter") as writer:
-                            pd.DataFrame(result["riepilogo"]).T.to_excel(writer, sheet_name="Riepilogo")
-                            pd.DataFrame({t("field_model"): [sample["target_name"]],
-                                          t("field_neighbor"): [sample["vicino_name"]],
-                                          t("field_similarity"): [sample["sim_media"]]}).to_excel(writer, sheet_name="Campione", index=False)
-                            if sample["interventi_campione"]:
-                                pd.DataFrame(sample["interventi_campione"]).to_excel(writer, sheet_name="Interventi", index=False)
-                        buf.seek(0)
-                        st.download_button(label=t("download_excel"), data=buf,
+                        xlsx_bytes = write_report(result)
+                        st.download_button(label=t("download_excel"), data=xlsx_bytes,
                                            file_name="Stima_" + target_input.replace(" ", "_") + ".xlsx",
                                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     except Exception as e:
